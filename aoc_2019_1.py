@@ -1,4 +1,5 @@
 # adventofcode2019 #1
+# rajraj
 
 import sys
 
@@ -22,7 +23,7 @@ for line in sys.stdin:
     try:
         mymasses.append(int(line.strip()))
     except:
-        pass
+        pass    
 
 print(fuelreq2(mymasses))
 
