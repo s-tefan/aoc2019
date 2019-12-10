@@ -53,7 +53,7 @@ class Intcode:
         self.pos += 2
         return True
 
-    # 3
+    # 4
     def output(self, mode=0):
         if mode == 0:
             argpos = self.code[self.pos+1]
