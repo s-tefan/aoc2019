@@ -4,64 +4,52 @@ class Intcode:
 ### modes need to be corrected
 ### refactoring of getting positions to be done
 
+    def interpret_parameters(self, n_params, modes):
+        inparams = self.code[self.pos+1:self.pos+1+n_params]
+        pos = [None]*n_params
+        for k in range(n_params):
+            mode = modes%10
+            modes = modes//10
+            if mode == 0:
+                pos[k] = inparams[k]
+            elif mode == 1:
+                pos[k] = self.pos+1+k
+            else:
+                pass
+        return pos
+
 # operations for the different opcodes
 
     # 1
     def add(self, mode=0):
-        if mode == 0:
-            arg1pos = self.code[self.pos+1]
-            arg2pos = self.code[self.pos+2]
-            resultpos = self.code[self.pos+3]
-        elif mode == 1:
-            arg1pos = self.pos+1
-            arg2pos = self.pos+2
-            resultpos = self.pos+3
-        elif mode ==2:
-            pass
-        self.code[resultpos] = \
-            self.code[arg1pos] + self.code[arg2pos]
+        par_pos = self.interpret_parameters(3,mode)
+        print(par_pos)
+        self.code[par_pos[2]] = \
+            self.code[par_pos[0]] + self.code[par_pos[1]]
         self.pos += 4
         return True
 
     # 2
     def mult(self, mode=0):
-        if mode == 0:
-            arg1pos = self.code[self.pos+1]
-            arg2pos = self.code[self.pos+2]
-            resultpos = self.code[self.pos+3]
-        elif mode == 1:
-            arg1pos = self.pos+1
-            arg2pos = self.pos+2
-            resultpos = self.pos+3
-        elif mode ==2:
-            pass
-        self.code[resultpos] = \
-            self.code[arg1pos] * self.code[arg2pos]
+        par_pos = self.interpret_parameters(3,mode)
+        print(par_pos)
+        self.code[par_pos[2]] = \
+            self.code[par_pos[0]] * self.code[par_pos[1]]
         self.pos += 4
         return True
-
+    
     # 3
     def input(self, mode=0):
-        if mode == 0:
-            resultpos = self.code[self.pos+1]
-        elif mode == 1:
-            resultpos = self.pos+1
-        elif mode == 2:
-            pass
-        self.code[resultpos] = \
+        par_pos = self.interpret_parameters(1,mode)
+        self.code[par_pos[0]] = \
             int(input('>'))
         self.pos += 2
         return True
 
     # 4
     def output(self, mode=0):
-        if mode == 0:
-            argpos = self.code[self.pos+1]
-        elif mode == 1:
-            argpos = self.pos+1
-        elif mode == 2:
-            pass
-        print(self.code[argpos])
+        par_pos = self.interpret_parameters(1,mode)
+        print(self.code[par_pos[0]])
         self.pos += 2
         return True
 
