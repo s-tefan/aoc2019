@@ -1,14 +1,35 @@
 import sys
 
 debug = False
-debug = True
+#debug = True
 
 
 # Implements intcode as a python class up to day 5
 
 class Intcode:
 
+
+    def __init__(self, code = [], pos = 0):
+        self.code = code
+        self.pos = pos
+        self.terminated = False
+        self.relative_base = 0
+        # A dictionary of operations for opcodes
+        self.op_dict = {
+            1: self.add,
+            2: self.mult,
+            3: self.input,
+            4: self.output,
+            5: self.jump_if_true,
+            6: self.jump_if_false,
+            7: self.less_than,
+            8: self.equals,
+            9: self.relative_base_offset,
+            99: self.terminate,
+        }
+
     def interpret_parameters(self, n_params, modes):
+        # Interprets parameters for an opcode
         inparams = []
         for k in range(n_params): # slice does not work if the code is a dict
             inparams.append(self.lookup(self.pos+1+k))
@@ -27,24 +48,50 @@ class Intcode:
         return pos
 
     def lookup(self,pos):
+        # Looks up code at position pos
         try:
             return self.code[pos]
         except IndexError:
-            return 0
+            return 0 # Code is a list and pos is outside index range
         except KeyError:
-            return 0
+            return 0 # Code is a dict and pos is not a key 
 
     def store(self,pos,val):
+        # Stores val at position pos in code
         try:
             self.code[pos]=val
         except IndexError:
+            # If code is a list and pos is outside index range
             # raise IndexError('Trying to store code outside list. Try init code as dict.')
             print('Changing stored code from list to dict', file=sys.stderr)
-            self.make_code_dict()
+            self.make_code_dict() # Make code a dist instead of a list
+            # May want to refactor into extending list instead if not becoming sparse
 
     def make_code_dict(self):
+        # changes code storage from list to dict
         dict_code = { i : self.code[i] for i in range(len(self.code) ) }
         self.code = dict_code
+
+    def load_code(self, code, pos=0):
+        # loads code into intcode object
+        self.code = code
+        self.pos = pos
+
+    def load_code_from_string(self,codestring):
+        # loads code (as string) into intcode object
+        stripsplitline = codestring.strip().split(',')
+        self.load_code(list(map(int,stripsplitline)))
+    
+    def run(self):
+        # runs the intcode
+        self.terminated = False
+        while not self.terminated:
+            if debug: print(self.code)
+            opcode = self.lookup(self.pos)
+            if debug: print('pos:', self.pos, ' opcode:', opcode, ' rel_base:', self.relative_base)
+            op = self.op_dict[opcode%100]
+            mode = opcode//100
+            op(mode)
 
 # operations for the different opcodes
 
@@ -130,41 +177,3 @@ class Intcode:
     def terminate(self, mode=0):
         self.terminated = True
         return True
-
-    def __init__(self, code = [], pos = 0):
-        self.code = code
-        self.pos = pos
-        self.terminated = False
-        self.relative_base = 0
-        # A dictionary of operations for opcodes
-        self.op_dict = {
-            1: self.add,
-            2: self.mult,
-            3: self.input,
-            4: self.output,
-            5: self.jump_if_true,
-            6: self.jump_if_false,
-            7: self.less_than,
-            8: self.equals,
-            9: self.relative_base_offset,
-            99: self.terminate,
-        }
-
-    def set_code(self, code, pos=0):
-        self.code = code
-        self.pos = pos
-
-    def set_code_from_string(self,codestring):
-        stripsplitline = codestring.strip().split(',')
-        self.set_code(list(map(int,stripsplitline)))
-    
-    def run(self):
-        self.terminated = False
-        while not self.terminated:
-            if debug: print(self.code)
-            opcode = self.lookup(self.pos)
-            if debug: print('pos:', self.pos, ' opcode:', opcode, ' rel_base:', self.relative_base)
-            op = self.op_dict[opcode%100]
-            mode = opcode//100
-            op(mode)
-
