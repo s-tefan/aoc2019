@@ -1,3 +1,5 @@
+import sys
+
 debug = False
 debug = True
 
@@ -37,7 +39,7 @@ class Intcode:
             self.code[pos]=val
         except IndexError:
             # raise IndexError('Trying to store code outside list. Try init code as dict.')
-            print('Changing stored code from list to dict')
+            print('Changing stored code from list to dict', file=sys.stderr)
             self.make_code_dict()
 
     def make_code_dict(self):
