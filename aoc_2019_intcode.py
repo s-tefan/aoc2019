@@ -1,9 +1,10 @@
 debug = False
 #debug = True
 
+
+# Implements intcode as a python class up to day 5
+
 class Intcode:
-
-
 
     def interpret_parameters(self, n_params, modes):
         inparams = self.code[self.pos+1:self.pos+1+n_params]
@@ -90,14 +91,10 @@ class Intcode:
         self.pos += 4
         return True
 
-
-
-
     # 99
     def terminate(self, mode=0):
         self.terminated = True
         return True
-
 
     def __init__(self, code = [], pos = 0):
         self.code = code
@@ -123,7 +120,6 @@ class Intcode:
     def set_code_from_string(self,codestring):
         stripsplitline = codestring.strip().split(',')
         self.set_code(list(map(int,stripsplitline)))
-
     
     def run(self):
         self.terminated = False
@@ -134,27 +130,3 @@ class Intcode:
             op = self.op_dict[opcode%100]
             mode = opcode//100
             op(mode)
-            
-
-
-
- 
-def test():
-    test_code2 = [1,9,10,3,2,3,11,0,99,30,40,50]
-    test2 = Intcode(test_code2, 0)
-    test2.run()
-    print(test2.code)
-
-    test5 = Intcode([3,0,4,0,99],0)
-    test5.run()
-    print(test5.code)
-
-    test5a = Intcode([1002,4,3,4,33])
-    test5a.run()
-    print(test5a.code)
-
-    test5b = Intcode([1101,100,-1,4,0])
-    test5b.run()
-    print(test5b.code)
-
-
