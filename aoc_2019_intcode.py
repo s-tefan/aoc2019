@@ -113,6 +113,5 @@ print(test2.code)
 
 test5 = Intcode([3,0,4,0,99],0)
 test5.run()
-test5.run()
 print(test5.code)
 
