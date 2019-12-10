@@ -6,7 +6,7 @@ import aoc_2019_intcode as ic
 def day5():
     with open("input5.txt","r") as f:
         code = ic.Intcode()
-        code.set_code_from_string(f.readline())
+        code.load_code_from_string(f.read())
         code.run()
 
 def test2(code):

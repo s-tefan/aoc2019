@@ -12,7 +12,6 @@ class Intcode:
     def __init__(self, code = [], pos = 0):
         self.code = code
         self.pos = pos
-        self.terminated = False
         self.relative_base = 0
         # A dictionary of operations for opcodes
         self.op_dict = {
@@ -66,6 +65,7 @@ class Intcode:
             print('Changing stored code from list to dict', file=sys.stderr)
             self.make_code_dict() # Make code a dist instead of a list
             # May want to refactor into extending list instead if not becoming sparse
+            self.store(pos,val)
 
     def make_code_dict(self):
         # changes code storage from list to dict
@@ -84,16 +84,17 @@ class Intcode:
     
     def run(self):
         # runs the intcode
-        self.terminated = False
-        while not self.terminated:
+        while True:
             if debug: print(self.code)
             opcode = self.lookup(self.pos)
             if debug: print('pos:', self.pos, ' opcode:', opcode, ' rel_base:', self.relative_base)
             op = self.op_dict[opcode%100]
             mode = opcode//100
-            op(mode)
+            if not op(mode):
+                break # run the op, break if program terminates
 
-# operations for the different opcodes
+# operations for the different opcode
+# returns True except for terminate()
 
     # 1
     def add(self, mode=0):
@@ -175,5 +176,4 @@ class Intcode:
 
     # 99
     def terminate(self, mode=0):
-        self.terminated = True
-        return True
+        return False
