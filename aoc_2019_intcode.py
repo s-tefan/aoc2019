@@ -1,5 +1,5 @@
 debug = False
-
+#debug = True
 
 class Intcode:
 
@@ -52,9 +52,49 @@ class Intcode:
         self.pos += 2
         return True
 
+    # 5
+    def jump_if_true(self,mode):
+        par_pos = self.interpret_parameters(2,mode)
+        if self.code[par_pos[0]]:
+            self.pos=self.code[par_pos[1]]
+        else:
+            self.pos += 3
+        return True
+
+    # 6
+    def jump_if_false(self,mode):
+        par_pos = self.interpret_parameters(2,mode)
+        if not self.code[par_pos[0]]:
+            self.pos=self.code[par_pos[1]]
+        else:
+            self.pos += 3
+        return True
+
+    # 7
+    def less_than(self,mode):
+        par_pos = self.interpret_parameters(3,mode)
+        if self.code[par_pos[0]] < self.code[par_pos[1]]:
+            self.code[par_pos[2]] = 1
+        else:
+            self.code[par_pos[2]] = 0
+        self.pos += 4
+        return True
+
+    # 7
+    def equals(self,mode):
+        par_pos = self.interpret_parameters(3,mode)
+        if self.code[par_pos[0]] == self.code[par_pos[1]]:
+            self.code[par_pos[2]] = 1
+        else:
+            self.code[par_pos[2]] = 0
+        self.pos += 4
+        return True
+
+
+
 
     # 99
-    def terminate(self,mode=0):
+    def terminate(self, mode=0):
         self.terminated = True
         return True
 
@@ -69,6 +109,10 @@ class Intcode:
             2: self.mult,
             3: self.input,
             4: self.output,
+            5: self.jump_if_true,
+            6: self.jump_if_false,
+            7: self.less_than,
+            8: self.equals,
             99: self.terminate,
         }
 
