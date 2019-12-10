@@ -4,7 +4,7 @@ debug = False
 #debug = True
 
 
-# Implements intcode as a python class up to day 5
+# Implements intcode as a python class up to day 9
 
 class Intcode:
 
