@@ -1,5 +1,9 @@
 class Intcode:
- 
+
+
+### modes need to be corrected
+### refactoring of getting positions to be done
+
 # operations for the different opcodes
 
     # 1
