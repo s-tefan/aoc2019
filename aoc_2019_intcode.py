@@ -5,9 +5,6 @@ class Intcode:
 
 
 
-### modes need to be corrected
-### refactoring of getting positions to be done
-
     def interpret_parameters(self, n_params, modes):
         inparams = self.code[self.pos+1:self.pos+1+n_params]
         pos = [None]*n_params
