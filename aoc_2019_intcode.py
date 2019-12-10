@@ -1,4 +1,8 @@
+debug = False
+
+
 class Intcode:
+
 
 
 ### modes need to be corrected
@@ -23,7 +27,6 @@ class Intcode:
     # 1
     def add(self, mode=0):
         par_pos = self.interpret_parameters(3,mode)
-        print(par_pos)
         self.code[par_pos[2]] = \
             self.code[par_pos[0]] + self.code[par_pos[1]]
         self.pos += 4
@@ -32,7 +35,6 @@ class Intcode:
     # 2
     def mult(self, mode=0):
         par_pos = self.interpret_parameters(3,mode)
-        print(par_pos)
         self.code[par_pos[2]] = \
             self.code[par_pos[0]] * self.code[par_pos[1]]
         self.pos += 4
@@ -77,17 +79,17 @@ class Intcode:
         self.code = code
         self.pos = pos
 
-    def set_code_from_string(codestring):
-        stripsplitline = line.strip().split(',')
+    def set_code_from_string(self,codestring):
+        stripsplitline = codestring.strip().split(',')
         self.set_code(list(map(int,stripsplitline)))
 
     
     def run(self):
         self.terminated = False
         while not self.terminated:
-            print(self.code)
+            if debug: print(self.code)
             opcode = self.code[self.pos]
-            print(opcode)
+            if debug: print(opcode)
             op = self.op_dict[opcode%100]
             mode = opcode//100
             op(mode)
@@ -96,14 +98,22 @@ class Intcode:
 
 
  
+def test():
+    test_code2 = [1,9,10,3,2,3,11,0,99,30,40,50]
+    test2 = Intcode(test_code2, 0)
+    test2.run()
+    print(test2.code)
 
+    test5 = Intcode([3,0,4,0,99],0)
+    test5.run()
+    print(test5.code)
 
-test_code2 = [1,9,10,3,2,3,11,0,99,30,40,50]
-test2 = Intcode(test_code2, 0)
-test2.run()
-print(test2.code)
+    test5a = Intcode([1002,4,3,4,33])
+    test5a.run()
+    print(test5a.code)
 
-test5 = Intcode([3,0,4,0,99],0)
-test5.run()
-print(test5.code)
+    test5b = Intcode([1101,100,-1,4,0])
+    test5b.run()
+    print(test5b.code)
+
 
