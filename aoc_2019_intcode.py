@@ -8,7 +8,6 @@ debug = False
 
 class Intcode:
 
-
     def __init__(self, code = [], pos = 0):
         self.code = code
         self.pos = pos
@@ -63,7 +62,7 @@ class Intcode:
             # If code is a list and pos is outside index range
             # raise IndexError('Trying to store code outside list. Try init code as dict.')
             print('Changing stored code from list to dict', file=sys.stderr)
-            self.make_code_dict() # Make code a dist instead of a list
+            self.make_code_dict() # Make code a dict instead of a list
             # May want to refactor into extending list instead if not becoming sparse
             self.store(pos,val)
 
