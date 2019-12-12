@@ -3,7 +3,6 @@ start_velocities = [0,0,0,0]
 def count(start_positions):
     positions = start_positions.copy()
     velocities = start_velocities.copy()
-
     repeat = True
     n = len(positions)
     k = 0
@@ -26,13 +25,6 @@ def lcd(a,b):
     else:
         return lcd(b,a%b)
 
-'''
-<x=0, y=6, z=1>
-<x=4, y=4, z=19>
-<x=-11, y=1, z=8>
-<x=2, y=19, z=15>
-'''
-
 xc = count([0,4,-11,2])
 print(xc)
 yc = count([6,4,1,19])
@@ -42,3 +34,11 @@ print(zc)
 mcd1 = xc*yc//lcd(xc,yc)
 mcd = mcd1*zc//lcd(mcd1,zc)
 print(mcd)
+
+'''
+<x=0, y=6, z=1>
+<x=4, y=4, z=19>
+<x=-11, y=1, z=8>
+<x=2, y=19, z=15>
+'''
+
