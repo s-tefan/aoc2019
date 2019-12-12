@@ -7,18 +7,15 @@ def count(start_positions):
     repeat = True
     n = len(positions)
     k = 0
-    #print(positions,velocities)
     while repeat:
         for p in range(n):
             g = 0
             for q in range(n):
                 if q != p:
                     g += ((positions[q]>positions[p])-(positions[q]<positions[p]))
-            #gravities[p] = g
             velocities[p] += g
         for p in range(n):
             positions[p] += velocities[p]
-        #print('g: ',gravities,'\t v: ',velocities,'\t x: ',positions)
         k += 1
         repeat = (positions != start_positions or velocities != start_velocities)
     return k
@@ -42,9 +39,6 @@ yc = count([6,4,1,19])
 print(yc)
 zc = count([1,19,8,15])
 print(zc)
-
 mcd1 = xc*yc//lcd(xc,yc)
 mcd = mcd1*zc//lcd(mcd1,zc)
 print(mcd)
-
-
