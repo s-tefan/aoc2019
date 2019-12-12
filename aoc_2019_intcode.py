@@ -176,3 +176,48 @@ class Intcode:
     # 99
     def terminate(self, mode=0):
         return False
+
+class IntcodeIO(Intcode):
+
+    NEEDS_INPUT = 2
+    WRITE = 3
+
+    output_buffer = []
+    input_buffer = []
+
+    def input(self, mode=0):
+        par_pos = self.interpret_parameters(1,mode)
+        if self.input_buffer:
+            self.store(par_pos[0], self.input_buffer.pop(0))
+            self.pos += 2
+            return True
+        else:
+            return self.NEEDS_INPUT
+
+    def output(self, mode=0):
+        par_pos = self.interpret_parameters(1,mode)
+        self.send(self.lookup(par_pos[0]))
+        self.pos += 2
+        return True
+
+    def send(self, outp):
+        self.output_buffer.append(outp)
+
+
+    def run_io(self, inp):
+        # runs the intcode with iterable input inp until next input
+        # where outp is returned
+        self.input_buffer = inp.copy()
+        while True:
+            if debug: print(self.code)
+            opcode = self.lookup(self.pos)
+            if debug: print('pos:', self.pos, ' opcode:', opcode, ' rel_base:', self.relative_base)
+            op = self.op_dict[opcode%100]
+            mode = opcode//100
+            return_value = int(op(mode))
+            if return_value == 0 : 
+                break  # run the op, break if program terminates
+            elif return_value == self.NEEDS_INPUT :
+                outp = self.output_buffer.copy()
+                self.output_buffer = []
+                return outp 
