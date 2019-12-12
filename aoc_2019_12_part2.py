@@ -1,4 +1,3 @@
-start_velocities = [0,0,0,0]
 
 def count(start_positions):
     positions = start_positions.copy()
@@ -25,6 +24,10 @@ def lcd(a,b):
     else:
         return lcd(b,a%b)
 
+
+import time
+t0 = time.process_time()
+start_velocities = [0,0,0,0] #global
 xc = count([0,4,-11,2])
 print(xc)
 yc = count([6,4,1,19])
@@ -34,7 +37,8 @@ print(zc)
 mcd1 = xc*yc//lcd(xc,yc)
 mcd = mcd1*zc//lcd(mcd1,zc)
 print(mcd)
-
+t1 = time.process_time()
+print('process time', t1-t0,'seconds')
 '''
 <x=0, y=6, z=1>
 <x=4, y=4, z=19>
