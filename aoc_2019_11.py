@@ -32,9 +32,9 @@ def day11():
                         white.remove(pos)
                         black.add(pos)
                     if output[1]:
-                        dir = (-dir[1], dir[0])
-                    else:
                         dir = (dir[1], -dir[0])
+                    else:
+                        dir = (-dir[1], dir[0])
                     pos = tuple(sum(x) for x in zip(pos,dir))
                     #print(pos)
                 else:
@@ -46,7 +46,7 @@ def day11():
             'y:', min(white_y), max(white_y), )
         for y in range(max(white_y),min(white_y)-1,-1):
             line = ''
-            for x in range(max(white_x),min(white_x)-1,-1):
+            for x in range(min(white_x),max(white_x)+1):
                 if (x,y) in white:
                     line += 'w'
                 elif (x,y) in black:
