@@ -216,7 +216,10 @@ class IntcodeIO(Intcode):
             mode = opcode//100
             return_value = int(op(mode))
             if return_value == 0 : 
-                break  # run the op, break if program terminates
+                outp = self.output_buffer.copy()
+                self.output_buffer = []
+                return outp 
+#                break  # run the op, break if program terminates
             elif return_value == self.NEEDS_INPUT :
                 outp = self.output_buffer.copy()
                 self.output_buffer = []
