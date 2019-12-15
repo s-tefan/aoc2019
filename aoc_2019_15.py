@@ -74,6 +74,8 @@ def part1(intcode):
             return level+1
         else:
             level += 1
+        #print_cave(g_levellist)
+        pass
             
 def part2():
     # solve part two by traversing breadth first from the oxygen system
