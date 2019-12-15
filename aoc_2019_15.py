@@ -99,6 +99,33 @@ def part2():
     if verbose: print("It takes {} minutes to fill the area with oxygen".format(level-1))
     return level-1
 
+
+
+def print_cave(level_list):
+    pset = set()
+    for level in level_list:
+        for k in level:
+            pos = [0,0]
+            for move in k['path']:
+                d = [(0,0),(0,-1),(0,1),(-1,0),(1,0)][move]
+                pos[0] += d[0]
+                pos[1] += d[1]
+            pset.add(tuple(pos))
+    we,ns = list(zip(*pset))
+    wemin, wemax, nsmin, nsmax = min(we), max(we), min(ns), max(ns)
+    canvas = []
+    for k in range(nsmax-nsmin+3):
+        canvas.append(['#']*(wemax-wemin+3))
+    for pos in pset:
+        canvas[pos[1]-nsmin+1][pos[0]-wemin+1]=' '
+    for row in canvas:
+        print(''.join(row))
+
+
+
+
+
+
 import time
 
 def day15():
@@ -118,6 +145,6 @@ def day15():
         print("It takes {} minutes to fill the area with oxygen".format(part2()))
         t3 = time.process_time()
         print('Part 2: process time', t3-t2,'seconds')
-    
+        print_cave(g_levellist)    
 
 day15()
