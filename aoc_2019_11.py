@@ -5,7 +5,7 @@ def day11():
     with open("input11.txt", "r") as f:
         intcode = ic.IntcodeIO()
         s = f.read()
-        print(s)
+        #print(s)
         stripsplitline = s.strip().split(',')
         # intcode.load_code(dict_from_list(list(map(int,stripsplitline))))
         intcode.load_code_from_string(s)
