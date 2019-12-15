@@ -1,0 +1,123 @@
+import aoc_2019_intcode as ic
+
+'''
+Strategy: Try different directions in a breadth first traversion until oxygen system found
+Saving a copy of the intcode program for each direction recursively
+Part one: stop when oxygen is found
+Part two: note at which level there are no branches left.
+'''
+
+#globals
+g_levellist = [[]]
+verbose = False
+
+def save_state(level, state):
+    # saves the state at a point in the walk
+    global g_levellist
+    g_levellist[level].append(state)
+
+def try_dir(dir, code):
+    # try a direction
+    status = code.run_io([dir])
+    #print(status)
+    return status[0]
+
+
+def try_dirs(level, state):
+    # try every direction except going back
+    # check for oxygen system
+    # save the state for every path forward
+    back = (0,2,1,4,3)[state['lastdir']]
+    for dir in range(1,5):
+        if dir != back:
+            newstate = state.copy()
+            newstate['code'] = state['code'].copy()
+            t = try_dir(dir,newstate['code'])
+            if t == 2:
+                if verbose: print("OXYGEN!")
+                newstate['lastdir'] = dir
+                newpath = state['path'].copy()
+                newpath.append(dir)
+                newstate['path'] = newpath
+                save_state(level, newstate)
+                return 'oxygen'
+            elif t == 1:
+                newstate['lastdir'] = dir
+                newpath = state['path'].copy()
+                newpath.append(dir)
+                newstate['path'] = newpath
+                save_state(level, newstate)
+                pass
+    #print(g_levellist)
+    return 'ok'
+
+def traverse_level(level):
+    # traverse a level
+    g_levellist.append([])
+    for muck in g_levellist[level]:
+        status = try_dirs(level+1, muck)
+        if status == 'oxygen':
+            return 'oxygen'
+    return 'ok'
+
+
+def part1(intcode):
+    # solve part one by traversing breadth first
+    running = True
+    level = 0
+    g_levellist[0] = [{'lastdir':0, 'code':intcode.copy(), 'path':[]}]
+    while running:
+        if verbose: print('Traversing level {}!'.format(level))
+        status = traverse_level(level)
+        if status == 'oxygen':
+            if verbose: print('Oxygen found after {} steps'.format(level+1))
+            return level+1
+        else:
+            level += 1
+            
+def part2():
+    # solve part two by traversing breadth first from the oxygen system
+    # until there are no more paths forward
+    global g_levellist
+    state = g_levellist[-1][-1]
+    newstate = state.copy()
+    newstate['code'] = state['code'].copy()
+    newstate['lastdir'] = 0
+    newpath = []
+    newstate['path'] = newpath
+    running = True
+    level = 0
+    g_levellist = [[]]
+    g_levellist[0] = [newstate]
+    while running:
+        if verbose: print('Traversing level {}!'.format(level))
+        status = traverse_level(level)
+        if g_levellist[level]:
+            level += 1
+        else:
+            break
+    if verbose: print("It takes {} minutes to fill the area with oxygen".format(level-1))
+    return level-1
+
+import time
+
+def day15():
+    with open("input15.txt","r") as f:
+        intcode = ic.IntcodeIO()
+        s = f.read()
+        if verbose: print(s)
+        stripsplitline = s.strip().split(',')
+        #intcode.load_code(dict_from_list(list(map(int,stripsplitline))))
+        intcode.load_code_from_string(s)
+
+        t0 = time.process_time()
+        print("Oxygen found after {} steps".format(part1(intcode)))
+        t1 = time.process_time()
+        print('Part 1:','process time', t1-t0,'seconds')
+        t2 = time.process_time()
+        print("It takes {} minutes to fill the area with oxygen".format(part2()))
+        t3 = time.process_time()
+        print('Part 2: process time', t3-t2,'seconds')
+    
+
+day15()

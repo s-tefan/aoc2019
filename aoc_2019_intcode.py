@@ -26,6 +26,11 @@ class Intcode:
             99: self.terminate,
         }
 
+    def copy(self):
+        intcodecopy = Intcode(code = self.code.copy(), pos = self.pos)
+        intcodecopy.relative_base = self.relative_base
+        return intcodecopy
+
     def interpret_parameters(self, n_params, modes):
         # Interprets parameters for an opcode
         inparams = []
@@ -184,6 +189,14 @@ class IntcodeIO(Intcode):
 
     output_buffer = []
     input_buffer = []
+
+    def copy(self):
+        intcodecopy = IntcodeIO(code = self.code.copy(), pos = self.pos)
+        intcodecopy.relative_base = self.relative_base
+        intcodecopy.input_buffer = self.input_buffer.copy()
+        intcodecopy.output_buffer = self.output_buffer.copy()
+        return intcodecopy
+
 
     def input(self, mode=0):
         par_pos = self.interpret_parameters(1,mode)
