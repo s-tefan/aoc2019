@@ -70,13 +70,13 @@ def part1(intcode):
     while running:
         if verbose: print('Traversing level {}!'.format(level))
         status = traverse_level(level)
+        level +=1
         if status == 'oxygen':
-            if verbose: print('Oxygen found after {} steps'.format(level+1))
-            return level+1
-        else:
-            level += 1
+            if verbose: print('Oxygen found after {} steps'.format(level))
+            return level
         #print_cave(g_levellist)
-        pass
+        if not g_levellist[level]: break # break if all paths ended.
+
             
 def part2():
     # solve part two by traversing breadth first from the oxygen system
@@ -94,7 +94,7 @@ def part2():
     g_levellist[0] = [newstate]
     while running:
         if verbose: print('Traversing level {}!'.format(level))
-        status = traverse_level(level)
+        traverse_level(level)
         if g_levellist[level]:
             level += 1
         else:
@@ -125,10 +125,6 @@ def print_cave(level_list):
         print(''.join(row))
 
 
-
-
-
-
 import time
 
 def day15():
@@ -136,18 +132,18 @@ def day15():
         intcode = ic.IntcodeIO()
         s = f.read()
         if verbose: print(s)
-        stripsplitline = s.strip().split(',')
-        #intcode.load_code(dict_from_list(list(map(int,stripsplitline))))
         intcode.load_code_from_string(s)
 
         t0 = time.process_time()
         print("Oxygen found after {} steps".format(part1(intcode)))
         t1 = time.process_time()
         print('Part 1:','process time', t1-t0,'seconds')
+
         t2 = time.process_time()
         print("It takes {} minutes to fill the area with oxygen".format(part2()))
         t3 = time.process_time()
         print('Part 2: process time', t3-t2,'seconds')
+        print('Map:')
         print_cave(g_levellist)    
 
 day15()
