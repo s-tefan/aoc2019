@@ -33,6 +33,7 @@ def try_dirs(level, state):
             newstate = state.copy()
             newstate['code'] = state['code'].copy()
             t = try_dir(dir,newstate['code'])
+            newstate['status'] = t
             if t == 2:
                 if verbose: print("OXYGEN!")
                 newstate['lastdir'] = dir
