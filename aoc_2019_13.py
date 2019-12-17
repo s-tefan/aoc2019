@@ -4,7 +4,6 @@ def part1():
     with open("input13.txt","r") as f:
         intcode = ic.IntcodeIO()
         s = f.read()
-        stripsplitline = s.strip().split(',')
         intcode.load_code_from_string(s)
         
         out = intcode.run_io([])

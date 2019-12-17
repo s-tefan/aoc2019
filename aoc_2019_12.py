@@ -100,7 +100,7 @@ def part1():
     callisto = Satellite([2,19,15])
     jupiter_moons = System([io, europa, ganymede, callisto])
 
-    for k in range(1000):
+    for _ in range(1000):
         jupiter_moons.update()
         for moon in jupiter_moons.satellites:
             print(moon.position,moon.velocity)
@@ -119,7 +119,7 @@ def part2():
 
 import time
 t0 = time.process_time()
-p1=part2()
+p1=part1()
 t1 = time.process_time()
 print('Part 1:',p1,'process time', t1-t0,'seconds')
 t2 = time.process_time()
