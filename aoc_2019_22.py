@@ -2,6 +2,7 @@
 
 # card shuffling as arithmetics in Z_p
 
+verbose = False
 
 def inv(x,n):
 # Multiplicative inverse, used in version 1
@@ -48,40 +49,18 @@ comms = ["deal with increment", "deal into new stack","cut"]
 g_fcndict = { \
     "deal with increment": (lambda x,k,n: (x*k)%n),
     "deal into new stack": (lambda x,k,n: (-x-1)%n),
-    "cut": (lambda x,k,n: (x+k)%n )
+    "cut": (lambda x,k,n: (x-k)%n )
     }
 
 g_invfcndict = {
     "deal with increment": (lambda x,k,n: (x*inv(k,n))%n),
     "deal into new stack": (lambda x,k,n: (-x-1)%n),
-    "cut": (lambda x,k,n: (x-k)%n )
+    "cut": (lambda x,k,n: (x+k)%n )
     }
 
 
-''' Obsolete
-def test0():
-    s = sys.stdin.read()
-    n = 10
-    commlist = read(s)
 
-    cardlist = list(range(n))
-    for comm in reversed(commlist):
-        if comm[0] in comms:
-            fcn = g_invfcndict[comm[0]]
-            new_cardlist = [fcn(x,comm[1],n) for x in cardlist]
-            cardlist = new_cardlist
-            #print(comm,':',cardlist)
-    print(cardlist)
 
-    
-    for k0 in range(9):
-        k = k0
-        for comm in commlist:
-            if comm[0] in comms:
-                fcn = g_fcndict[comm[0]]
-                k = fcn(k,comm[1],n)
-        print('Card', k0,'is in position', k)
-'''
 
 def doit(commlist,n,kort):
     # does it        
@@ -95,7 +74,7 @@ def doit(commlist,n,kort):
                 new_cardlist = [fcn(x,comm[1],n) for x in cardlist]
                 cardlist = new_cardlist
                 #print(comm,':',cardlist)
-        print(cardlist)
+        if verbose: print(cardlist)
         print(cardlist.index(kort))
 
         # Version 2
@@ -107,6 +86,12 @@ def doit(commlist,n,kort):
                 fcn = g_fcndict[comm[0]]
                 k = fcn(k,comm[1],n)
                 print(comm[0],comm[1],'Card',kort,'in position',k)
+
+
+
+def doit2(commlist,n,k):
+    coeffs=(1,0) # x -> x
+
 
 def part1():
     with open("input22.txt", "r") as f:
