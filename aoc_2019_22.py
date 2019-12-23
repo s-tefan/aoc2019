@@ -1,12 +1,11 @@
 # Advent of Code 2019 day 22
 
-# card shuffling as arithmetics in Z_p
+# card shuffling as affine functions in Z_p
 
 verbose = False
 
 def inv(x,n):
-# Multiplicative inverse, used in version 1
-# where we generate the deck
+# Multiplicative inverse mod n by euclids alg.
     qlist = []
     rlist = [n,x]
     r=1
@@ -25,7 +24,11 @@ def inv(x,n):
         b = (a0 - q*b0) % n
     return b
 
-
+'''
+# Alternatively, for prime p
+def inv(x,n):
+    return pow(x,n-2,n)
+'''
 
 def read(instr):
     # take indata as a string and make into a list
@@ -46,68 +49,85 @@ def read(instr):
 
 comms = ["deal with increment", "deal into new stack","cut"]
 
-g_fcndict = { \
-    "deal with increment": (lambda x,k,n: (x*k)%n),
-    "deal into new stack": (lambda x,k,n: (-x-1)%n),
-    "cut": (lambda x,k,n: (x-k)%n )
+
+# This dict gives the coefficients of a composite affine
+# transformation with a single shuffling of each kind
+# as the outer function
+g_fcn_coeff_dict = { \
+    "deal with increment": (lambda inner,k,n: ((inner[0]*k)%n,(inner[1]*k)%n)),
+    "deal into new stack": (lambda inner,k,n: ((-inner[0]-1)%n,n-inner[1])),
+    "cut": (lambda inner,k,n: ((inner[0]-k)%n, inner[1]))
     }
 
-g_invfcndict = {
-    "deal with increment": (lambda x,k,n: (x*inv(k,n))%n),
-    "deal into new stack": (lambda x,k,n: (-x-1)%n),
-    "cut": (lambda x,k,n: (x+k)%n )
-    }
 
 
 
+def coeffs_from_commlist(commlist,n):
+    # The position a card is in after shuffeling is 
+    # an affine function of the original position,
+    # and so is its inverse
+    # An affine function x -> a_0 + a_1 x
+    # is determined by two coefficients
+    # The composition of an affine function with 
+    # a single shuffling is listed in g_fcn_coeff_dict
+    coeffs=(0,1)
+    for comm in commlist:
+        if comm[0] in comms:
+            fcn = g_fcn_coeff_dict[comm[0]]
+            coeffs = fcn(coeffs,comm[1],n)
+    return coeffs
+
+def inv_coeffs(coeffs,n):
+    ainv = inv(coeffs[1],n)
+    return ((-ainv*coeffs[0])%n,ainv)
+
+def power_coeffs(coeffs,k,n):
+    cpow = pow(coeffs[1],k,n)
+    cinv = inv(coeffs[1]-1,n)
+    return ((coeffs[0]*(cpow-1)*cinv)%n, cpow)
 
 
-def doit(commlist,n,kort):
-    # does it        
-        # Version 1
-        # generate the shuffled deck
-        # then look up card
-        cardlist = list(range(n))
-        for comm in reversed(commlist):
-            if comm[0] in comms:
-                fcn = g_invfcndict[comm[0]]
-                new_cardlist = [fcn(x,comm[1],n) for x in cardlist]
-                cardlist = new_cardlist
-                #print(comm,':',cardlist)
-        if verbose: print(cardlist)
-        print(cardlist.index(kort))
+def part1(commlist):
+    # Does part 1 with affine function coefficients 
+        n = 10007
+        kort = 2019
+        coeffs = coeffs_from_commlist(commlist,n)
+        # coeffs are the coeffs for the affine function
+        # for final position of a card as a function of
+        # the original position
+        k = (coeffs[0] + kort*coeffs[1]) % n
+        print('Part 1: Card {} in position {}'.format(kort,k))
 
-        # Version 2
-        # does not generate the deck
-        # tracks the positions through shuffling
-        k = kort
-        for comm in commlist:
-            if comm[0] in comms:
-                fcn = g_fcndict[comm[0]]
-                k = fcn(k,comm[1],n)
-                print(comm[0],comm[1],'Card',kort,'in position',k)
-
-
-
-def doit2(commlist,n,k):
-    coeffs=(1,0) # x -> x
+def part2(commlist):
+        n = 119315717514047 # number of cards = modulus
+        k = 101741582076661 # number of reshuffles
+        coeffs = coeffs_from_commlist(commlist,n)
+        # As in part1 after one shuffle process
+        pcoeffs = power_coeffs(coeffs, k, n)
+        # pcoeffs for k repeats
+        invc = inv_coeffs(pcoeffs,n)
+        # The inverse affine function yields
+        # the original position as a function of the final
+        pos = 2020
+        k = (invc[0] + pos*invc[1]) % n
+        print('In final position {}: card {}'.format(pos,k))
 
 
-def part1():
+import sys, time
+
+
+def main():
     with open("input22.txt", "r") as f:
         s = f.read()
         commlist = read(s)
-        doit(read(s),10007,2019)
 
-def test1():
-    with open("test22.txt", "r") as f:
-        s = f.read()
-        commlist = read(s)
-        for kort in range(10):
-            doit(commlist,10,kort)
+        t0 = time.process_time()
+        part1(commlist)
+        t1 = time.process_time()
+        print('Part 2:', 'process time', t1-t0, 'seconds')
+        t2 = time.process_time()
+        part2(commlist)
+        t3 = time.process_time()
+        print('Part 1:', 'process time', t1-t0, 'seconds')
 
-import sys
-
-
-#test1()
-part1()
+main()
